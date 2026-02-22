@@ -4,8 +4,10 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import work.socialhub.khttpclient.HttpRequest
 import work.socialhub.kmatrix.api.RoomsResource
+import work.socialhub.kmatrix.api.request.rooms.RoomsCreateRoomRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsSendMessageRequest
 import work.socialhub.kmatrix.api.response.Response
+import work.socialhub.kmatrix.api.response.rooms.RoomsCreateRoomResponse
 import work.socialhub.kmatrix.api.response.rooms.RoomsGetJoinedRoomsResponse
 import work.socialhub.kmatrix.api.response.rooms.RoomsGetRoomNameResponse
 import work.socialhub.kmatrix.api.response.rooms.RoomsSendMessageResponse
@@ -22,6 +24,34 @@ class RoomsResourceImpl(
     RoomsResource {
 
     private var txnCounter = 0L
+
+    override suspend fun createRoom(
+        request: RoomsCreateRoomRequest
+    ): Response<RoomsCreateRoomResponse> {
+        return proceed {
+            val body = toJson(CreateRoomBody(
+                visibility = request.visibility,
+                roomAliasName = request.roomAliasName,
+                name = request.name,
+                topic = request.topic,
+                invite = request.invite,
+                preset = request.preset,
+                isDirect = request.isDirect,
+            ))
+            HttpRequest()
+                .url("${uri}/_matrix/client/v3/createRoom")
+                .header(AUTHORIZATION, bearerToken())
+                .accept(MediaType.JSON)
+                .json(body)
+                .post()
+        }
+    }
+
+    override fun createRoomBlocking(
+        request: RoomsCreateRoomRequest
+    ): Response<RoomsCreateRoomResponse> {
+        return toBlocking { createRoom(request) }
+    }
 
     override suspend fun getJoinedRooms(): Response<RoomsGetJoinedRoomsResponse> {
         return proceed {
@@ -82,6 +112,24 @@ class RoomsResourceImpl(
         txnCounter++
         return "kmatrix_${txnCounter}_${Random.nextLong(0, 100000)}"
     }
+
+    @Serializable
+    private data class CreateRoomBody(
+        @SerialName("visibility")
+        val visibility: String? = null,
+        @SerialName("room_alias_name")
+        val roomAliasName: String? = null,
+        @SerialName("name")
+        val name: String? = null,
+        @SerialName("topic")
+        val topic: String? = null,
+        @SerialName("invite")
+        val invite: Array<String>? = null,
+        @SerialName("preset")
+        val preset: String? = null,
+        @SerialName("is_direct")
+        val isDirect: Boolean? = null,
+    )
 
     @Serializable
     private data class SendMessageBody(
