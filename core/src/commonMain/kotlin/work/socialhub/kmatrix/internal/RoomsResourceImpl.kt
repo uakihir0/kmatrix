@@ -11,6 +11,8 @@ import work.socialhub.kmatrix.api.request.rooms.RoomsJoinRoomRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsLeaveRoomRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsRedactEventRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsSendMessageRequest
+import work.socialhub.kmatrix.api.request.rooms.RoomsSendReceiptRequest
+import work.socialhub.kmatrix.api.request.rooms.RoomsSetReadMarkersRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsTypingRequest
 import work.socialhub.kmatrix.api.response.Response
 import work.socialhub.kmatrix.api.response.ResponseUnit
@@ -300,6 +302,56 @@ class RoomsResourceImpl(
         return toBlocking { setTyping(request) }
     }
 
+    override suspend fun sendReceipt(
+        request: RoomsSendReceiptRequest
+    ): ResponseUnit {
+        return proceedUnit {
+            val roomId = request.roomId ?: ""
+            val receiptType = request.receiptType ?: "m.read"
+            val eventId = request.eventId ?: ""
+            val body = toJson(SendReceiptBody(
+                threadId = request.threadId,
+            ))
+            HttpRequest()
+                .url("${uri}/_matrix/client/v3/rooms/${roomId}/receipt/${receiptType}/${eventId}")
+                .header(AUTHORIZATION, bearerToken())
+                .accept(MediaType.JSON)
+                .json(body)
+                .post()
+        }
+    }
+
+    override fun sendReceiptBlocking(
+        request: RoomsSendReceiptRequest
+    ): ResponseUnit {
+        return toBlocking { sendReceipt(request) }
+    }
+
+    override suspend fun setReadMarkers(
+        request: RoomsSetReadMarkersRequest
+    ): ResponseUnit {
+        return proceedUnit {
+            val roomId = request.roomId ?: ""
+            val body = toJson(SetReadMarkersBody(
+                fullyRead = request.fullyRead,
+                read = request.read,
+                readPrivate = request.readPrivate,
+            ))
+            HttpRequest()
+                .url("${uri}/_matrix/client/v3/rooms/${roomId}/read_markers")
+                .header(AUTHORIZATION, bearerToken())
+                .accept(MediaType.JSON)
+                .json(body)
+                .post()
+        }
+    }
+
+    override fun setReadMarkersBlocking(
+        request: RoomsSetReadMarkersRequest
+    ): ResponseUnit {
+        return toBlocking { setReadMarkers(request) }
+    }
+
     private fun generateTxnId(): String {
         txnCounter++
         return "kmatrix_${txnCounter}_${Random.nextLong(0, 100000)}"
@@ -355,6 +407,22 @@ class RoomsResourceImpl(
         val typing: Boolean,
         @SerialName("timeout")
         val timeout: Int? = null,
+    )
+
+    @Serializable
+    private data class SendReceiptBody(
+        @SerialName("thread_id")
+        val threadId: String? = null,
+    )
+
+    @Serializable
+    private data class SetReadMarkersBody(
+        @SerialName("m.fully_read")
+        val fullyRead: String? = null,
+        @SerialName("m.read")
+        val read: String? = null,
+        @SerialName("m.read.private")
+        val readPrivate: String? = null,
     )
 
     @Serializable

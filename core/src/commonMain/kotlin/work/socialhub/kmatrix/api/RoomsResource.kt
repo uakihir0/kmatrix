@@ -7,6 +7,8 @@ import work.socialhub.kmatrix.api.request.rooms.RoomsJoinRoomRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsLeaveRoomRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsRedactEventRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsSendMessageRequest
+import work.socialhub.kmatrix.api.request.rooms.RoomsSendReceiptRequest
+import work.socialhub.kmatrix.api.request.rooms.RoomsSetReadMarkersRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsTypingRequest
 import work.socialhub.kmatrix.api.response.Response
 import work.socialhub.kmatrix.api.response.ResponseUnit
@@ -141,5 +143,29 @@ interface RoomsResource {
     @JsExport.Ignore
     fun setTypingBlocking(
         request: RoomsTypingRequest
+    ): ResponseUnit
+
+    /**
+     * POST /_matrix/client/v3/rooms/{roomId}/receipt/{receiptType}/{eventId}
+     */
+    suspend fun sendReceipt(
+        request: RoomsSendReceiptRequest
+    ): ResponseUnit
+
+    @JsExport.Ignore
+    fun sendReceiptBlocking(
+        request: RoomsSendReceiptRequest
+    ): ResponseUnit
+
+    /**
+     * POST /_matrix/client/v3/rooms/{roomId}/read_markers
+     */
+    suspend fun setReadMarkers(
+        request: RoomsSetReadMarkersRequest
+    ): ResponseUnit
+
+    @JsExport.Ignore
+    fun setReadMarkersBlocking(
+        request: RoomsSetReadMarkersRequest
     ): ResponseUnit
 }
