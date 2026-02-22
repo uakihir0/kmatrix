@@ -14,7 +14,9 @@ import work.socialhub.kmatrix.api.request.rooms.RoomsSendMessageRequest
 import work.socialhub.kmatrix.api.response.Response
 import work.socialhub.kmatrix.api.response.ResponseUnit
 import work.socialhub.kmatrix.api.response.rooms.RoomsCreateRoomResponse
+import work.socialhub.kmatrix.api.response.rooms.RoomsGetJoinedMembersResponse
 import work.socialhub.kmatrix.api.response.rooms.RoomsGetJoinedRoomsResponse
+import work.socialhub.kmatrix.api.response.rooms.RoomsGetMembersResponse
 import work.socialhub.kmatrix.api.response.rooms.RoomsGetMessagesResponse
 import work.socialhub.kmatrix.api.response.rooms.RoomsGetRoomNameResponse
 import work.socialhub.kmatrix.api.response.rooms.RoomsJoinRoomResponse
@@ -158,6 +160,42 @@ class RoomsResourceImpl(
 
     override fun getRoomNameBlocking(roomId: String): Response<RoomsGetRoomNameResponse> {
         return toBlocking { getRoomName(roomId) }
+    }
+
+    override suspend fun getMembers(
+        roomId: String
+    ): Response<RoomsGetMembersResponse> {
+        return proceed {
+            HttpRequest()
+                .url("${uri}/_matrix/client/v3/rooms/${roomId}/members")
+                .header(AUTHORIZATION, bearerToken())
+                .accept(MediaType.JSON)
+                .get()
+        }
+    }
+
+    override fun getMembersBlocking(
+        roomId: String
+    ): Response<RoomsGetMembersResponse> {
+        return toBlocking { getMembers(roomId) }
+    }
+
+    override suspend fun getJoinedMembers(
+        roomId: String
+    ): Response<RoomsGetJoinedMembersResponse> {
+        return proceed {
+            HttpRequest()
+                .url("${uri}/_matrix/client/v3/rooms/${roomId}/joined_members")
+                .header(AUTHORIZATION, bearerToken())
+                .accept(MediaType.JSON)
+                .get()
+        }
+    }
+
+    override fun getJoinedMembersBlocking(
+        roomId: String
+    ): Response<RoomsGetJoinedMembersResponse> {
+        return toBlocking { getJoinedMembers(roomId) }
     }
 
     override suspend fun getMessages(

@@ -10,7 +10,9 @@ import work.socialhub.kmatrix.api.request.rooms.RoomsSendMessageRequest
 import work.socialhub.kmatrix.api.response.Response
 import work.socialhub.kmatrix.api.response.ResponseUnit
 import work.socialhub.kmatrix.api.response.rooms.RoomsCreateRoomResponse
+import work.socialhub.kmatrix.api.response.rooms.RoomsGetJoinedMembersResponse
 import work.socialhub.kmatrix.api.response.rooms.RoomsGetJoinedRoomsResponse
+import work.socialhub.kmatrix.api.response.rooms.RoomsGetMembersResponse
 import work.socialhub.kmatrix.api.response.rooms.RoomsGetMessagesResponse
 import work.socialhub.kmatrix.api.response.rooms.RoomsGetRoomNameResponse
 import work.socialhub.kmatrix.api.response.rooms.RoomsJoinRoomResponse
@@ -78,6 +80,22 @@ interface RoomsResource {
 
     @JsExport.Ignore
     fun getRoomNameBlocking(roomId: String): Response<RoomsGetRoomNameResponse>
+
+    /**
+     * GET /_matrix/client/v3/rooms/{roomId}/members
+     */
+    suspend fun getMembers(roomId: String): Response<RoomsGetMembersResponse>
+
+    @JsExport.Ignore
+    fun getMembersBlocking(roomId: String): Response<RoomsGetMembersResponse>
+
+    /**
+     * GET /_matrix/client/v3/rooms/{roomId}/joined_members
+     */
+    suspend fun getJoinedMembers(roomId: String): Response<RoomsGetJoinedMembersResponse>
+
+    @JsExport.Ignore
+    fun getJoinedMembersBlocking(roomId: String): Response<RoomsGetJoinedMembersResponse>
 
     /**
      * GET /_matrix/client/v3/rooms/{roomId}/messages
