@@ -11,6 +11,7 @@ import work.socialhub.kmatrix.api.request.rooms.RoomsJoinRoomRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsLeaveRoomRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsRedactEventRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsSendMessageRequest
+import work.socialhub.kmatrix.api.request.rooms.RoomsTypingRequest
 import work.socialhub.kmatrix.api.response.Response
 import work.socialhub.kmatrix.api.response.ResponseUnit
 import work.socialhub.kmatrix.api.response.rooms.RoomsCreateRoomResponse
@@ -274,6 +275,31 @@ class RoomsResourceImpl(
         return toBlocking { redactEvent(request) }
     }
 
+    override suspend fun setTyping(
+        request: RoomsTypingRequest
+    ): ResponseUnit {
+        return proceedUnit {
+            val roomId = request.roomId ?: ""
+            val userId = request.userId ?: ""
+            val body = toJson(TypingBody(
+                typing = request.typing ?: false,
+                timeout = request.timeout,
+            ))
+            HttpRequest()
+                .url("${uri}/_matrix/client/v3/rooms/${roomId}/typing/${userId}")
+                .header(AUTHORIZATION, bearerToken())
+                .accept(MediaType.JSON)
+                .json(body)
+                .put()
+        }
+    }
+
+    override fun setTypingBlocking(
+        request: RoomsTypingRequest
+    ): ResponseUnit {
+        return toBlocking { setTyping(request) }
+    }
+
     private fun generateTxnId(): String {
         txnCounter++
         return "kmatrix_${txnCounter}_${Random.nextLong(0, 100000)}"
@@ -321,6 +347,14 @@ class RoomsResourceImpl(
     private data class RedactEventBody(
         @SerialName("reason")
         val reason: String? = null,
+    )
+
+    @Serializable
+    private data class TypingBody(
+        @SerialName("typing")
+        val typing: Boolean,
+        @SerialName("timeout")
+        val timeout: Int? = null,
     )
 
     @Serializable

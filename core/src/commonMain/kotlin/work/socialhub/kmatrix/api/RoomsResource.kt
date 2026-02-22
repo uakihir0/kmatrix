@@ -7,6 +7,7 @@ import work.socialhub.kmatrix.api.request.rooms.RoomsJoinRoomRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsLeaveRoomRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsRedactEventRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsSendMessageRequest
+import work.socialhub.kmatrix.api.request.rooms.RoomsTypingRequest
 import work.socialhub.kmatrix.api.response.Response
 import work.socialhub.kmatrix.api.response.ResponseUnit
 import work.socialhub.kmatrix.api.response.rooms.RoomsCreateRoomResponse
@@ -129,4 +130,16 @@ interface RoomsResource {
     fun redactEventBlocking(
         request: RoomsRedactEventRequest
     ): Response<RoomsRedactEventResponse>
+
+    /**
+     * PUT /_matrix/client/v3/rooms/{roomId}/typing/{userId}
+     */
+    suspend fun setTyping(
+        request: RoomsTypingRequest
+    ): ResponseUnit
+
+    @JsExport.Ignore
+    fun setTypingBlocking(
+        request: RoomsTypingRequest
+    ): ResponseUnit
 }
