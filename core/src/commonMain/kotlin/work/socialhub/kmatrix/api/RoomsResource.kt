@@ -1,11 +1,16 @@
 package work.socialhub.kmatrix.api
 
 import work.socialhub.kmatrix.api.request.rooms.RoomsCreateRoomRequest
+import work.socialhub.kmatrix.api.request.rooms.RoomsInviteRequest
+import work.socialhub.kmatrix.api.request.rooms.RoomsJoinRoomRequest
+import work.socialhub.kmatrix.api.request.rooms.RoomsLeaveRoomRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsSendMessageRequest
 import work.socialhub.kmatrix.api.response.Response
+import work.socialhub.kmatrix.api.response.ResponseUnit
 import work.socialhub.kmatrix.api.response.rooms.RoomsCreateRoomResponse
 import work.socialhub.kmatrix.api.response.rooms.RoomsGetJoinedRoomsResponse
 import work.socialhub.kmatrix.api.response.rooms.RoomsGetRoomNameResponse
+import work.socialhub.kmatrix.api.response.rooms.RoomsJoinRoomResponse
 import work.socialhub.kmatrix.api.response.rooms.RoomsSendMessageResponse
 import kotlin.js.JsExport
 
@@ -14,7 +19,6 @@ interface RoomsResource {
 
     /**
      * POST /_matrix/client/v3/createRoom
-     * Create a new room with various configuration options.
      */
     suspend fun createRoom(
         request: RoomsCreateRoomRequest
@@ -24,6 +28,42 @@ interface RoomsResource {
     fun createRoomBlocking(
         request: RoomsCreateRoomRequest
     ): Response<RoomsCreateRoomResponse>
+
+    /**
+     * POST /_matrix/client/v3/join/{roomIdOrAlias}
+     */
+    suspend fun joinRoom(
+        request: RoomsJoinRoomRequest
+    ): Response<RoomsJoinRoomResponse>
+
+    @JsExport.Ignore
+    fun joinRoomBlocking(
+        request: RoomsJoinRoomRequest
+    ): Response<RoomsJoinRoomResponse>
+
+    /**
+     * POST /_matrix/client/v3/rooms/{roomId}/leave
+     */
+    suspend fun leaveRoom(
+        request: RoomsLeaveRoomRequest
+    ): ResponseUnit
+
+    @JsExport.Ignore
+    fun leaveRoomBlocking(
+        request: RoomsLeaveRoomRequest
+    ): ResponseUnit
+
+    /**
+     * POST /_matrix/client/v3/rooms/{roomId}/invite
+     */
+    suspend fun invite(
+        request: RoomsInviteRequest
+    ): ResponseUnit
+
+    @JsExport.Ignore
+    fun inviteBlocking(
+        request: RoomsInviteRequest
+    ): ResponseUnit
 
     suspend fun getJoinedRooms(): Response<RoomsGetJoinedRoomsResponse>
 
