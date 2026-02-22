@@ -5,6 +5,7 @@ import work.socialhub.kmatrix.api.request.rooms.RoomsGetMessagesRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsInviteRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsJoinRoomRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsLeaveRoomRequest
+import work.socialhub.kmatrix.api.request.rooms.RoomsRedactEventRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsSendMessageRequest
 import work.socialhub.kmatrix.api.response.Response
 import work.socialhub.kmatrix.api.response.ResponseUnit
@@ -13,6 +14,7 @@ import work.socialhub.kmatrix.api.response.rooms.RoomsGetJoinedRoomsResponse
 import work.socialhub.kmatrix.api.response.rooms.RoomsGetMessagesResponse
 import work.socialhub.kmatrix.api.response.rooms.RoomsGetRoomNameResponse
 import work.socialhub.kmatrix.api.response.rooms.RoomsJoinRoomResponse
+import work.socialhub.kmatrix.api.response.rooms.RoomsRedactEventResponse
 import work.socialhub.kmatrix.api.response.rooms.RoomsSendMessageResponse
 import kotlin.js.JsExport
 
@@ -97,4 +99,16 @@ interface RoomsResource {
     fun sendMessageBlocking(
         request: RoomsSendMessageRequest
     ): Response<RoomsSendMessageResponse>
+
+    /**
+     * PUT /_matrix/client/v3/rooms/{roomId}/redact/{eventId}/{txnId}
+     */
+    suspend fun redactEvent(
+        request: RoomsRedactEventRequest
+    ): Response<RoomsRedactEventResponse>
+
+    @JsExport.Ignore
+    fun redactEventBlocking(
+        request: RoomsRedactEventRequest
+    ): Response<RoomsRedactEventResponse>
 }

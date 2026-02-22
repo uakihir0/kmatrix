@@ -9,6 +9,7 @@ import work.socialhub.kmatrix.api.request.rooms.RoomsGetMessagesRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsInviteRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsJoinRoomRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsLeaveRoomRequest
+import work.socialhub.kmatrix.api.request.rooms.RoomsRedactEventRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsSendMessageRequest
 import work.socialhub.kmatrix.api.response.Response
 import work.socialhub.kmatrix.api.response.ResponseUnit
@@ -17,6 +18,7 @@ import work.socialhub.kmatrix.api.response.rooms.RoomsGetJoinedRoomsResponse
 import work.socialhub.kmatrix.api.response.rooms.RoomsGetMessagesResponse
 import work.socialhub.kmatrix.api.response.rooms.RoomsGetRoomNameResponse
 import work.socialhub.kmatrix.api.response.rooms.RoomsJoinRoomResponse
+import work.socialhub.kmatrix.api.response.rooms.RoomsRedactEventResponse
 import work.socialhub.kmatrix.api.response.rooms.RoomsSendMessageResponse
 import work.socialhub.kmatrix.internal.InternalUtility.toJson
 import work.socialhub.kmatrix.util.Headers.AUTHORIZATION
@@ -209,6 +211,31 @@ class RoomsResourceImpl(
         return toBlocking { sendMessage(request) }
     }
 
+    override suspend fun redactEvent(
+        request: RoomsRedactEventRequest
+    ): Response<RoomsRedactEventResponse> {
+        return proceed {
+            val roomId = request.roomId ?: ""
+            val eventId = request.eventId ?: ""
+            val txnId = generateTxnId()
+            val body = toJson(RedactEventBody(
+                reason = request.reason,
+            ))
+            HttpRequest()
+                .url("${uri}/_matrix/client/v3/rooms/${roomId}/redact/${eventId}/${txnId}")
+                .header(AUTHORIZATION, bearerToken())
+                .accept(MediaType.JSON)
+                .json(body)
+                .put()
+        }
+    }
+
+    override fun redactEventBlocking(
+        request: RoomsRedactEventRequest
+    ): Response<RoomsRedactEventResponse> {
+        return toBlocking { redactEvent(request) }
+    }
+
     private fun generateTxnId(): String {
         txnCounter++
         return "kmatrix_${txnCounter}_${Random.nextLong(0, 100000)}"
@@ -248,6 +275,12 @@ class RoomsResourceImpl(
     private data class InviteBody(
         @SerialName("user_id")
         val userId: String,
+        @SerialName("reason")
+        val reason: String? = null,
+    )
+
+    @Serializable
+    private data class RedactEventBody(
         @SerialName("reason")
         val reason: String? = null,
     )
