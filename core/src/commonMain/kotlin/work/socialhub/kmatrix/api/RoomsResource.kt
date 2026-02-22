@@ -1,6 +1,7 @@
 package work.socialhub.kmatrix.api
 
 import work.socialhub.kmatrix.api.request.rooms.RoomsCreateRoomRequest
+import work.socialhub.kmatrix.api.request.rooms.RoomsGetMessagesRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsInviteRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsJoinRoomRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsLeaveRoomRequest
@@ -9,6 +10,7 @@ import work.socialhub.kmatrix.api.response.Response
 import work.socialhub.kmatrix.api.response.ResponseUnit
 import work.socialhub.kmatrix.api.response.rooms.RoomsCreateRoomResponse
 import work.socialhub.kmatrix.api.response.rooms.RoomsGetJoinedRoomsResponse
+import work.socialhub.kmatrix.api.response.rooms.RoomsGetMessagesResponse
 import work.socialhub.kmatrix.api.response.rooms.RoomsGetRoomNameResponse
 import work.socialhub.kmatrix.api.response.rooms.RoomsJoinRoomResponse
 import work.socialhub.kmatrix.api.response.rooms.RoomsSendMessageResponse
@@ -74,6 +76,18 @@ interface RoomsResource {
 
     @JsExport.Ignore
     fun getRoomNameBlocking(roomId: String): Response<RoomsGetRoomNameResponse>
+
+    /**
+     * GET /_matrix/client/v3/rooms/{roomId}/messages
+     */
+    suspend fun getMessages(
+        request: RoomsGetMessagesRequest
+    ): Response<RoomsGetMessagesResponse>
+
+    @JsExport.Ignore
+    fun getMessagesBlocking(
+        request: RoomsGetMessagesRequest
+    ): Response<RoomsGetMessagesResponse>
 
     suspend fun sendMessage(
         request: RoomsSendMessageRequest

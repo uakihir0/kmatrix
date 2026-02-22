@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 import work.socialhub.khttpclient.HttpRequest
 import work.socialhub.kmatrix.api.RoomsResource
 import work.socialhub.kmatrix.api.request.rooms.RoomsCreateRoomRequest
+import work.socialhub.kmatrix.api.request.rooms.RoomsGetMessagesRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsInviteRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsJoinRoomRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsLeaveRoomRequest
@@ -13,6 +14,7 @@ import work.socialhub.kmatrix.api.response.Response
 import work.socialhub.kmatrix.api.response.ResponseUnit
 import work.socialhub.kmatrix.api.response.rooms.RoomsCreateRoomResponse
 import work.socialhub.kmatrix.api.response.rooms.RoomsGetJoinedRoomsResponse
+import work.socialhub.kmatrix.api.response.rooms.RoomsGetMessagesResponse
 import work.socialhub.kmatrix.api.response.rooms.RoomsGetRoomNameResponse
 import work.socialhub.kmatrix.api.response.rooms.RoomsJoinRoomResponse
 import work.socialhub.kmatrix.api.response.rooms.RoomsSendMessageResponse
@@ -154,6 +156,30 @@ class RoomsResourceImpl(
 
     override fun getRoomNameBlocking(roomId: String): Response<RoomsGetRoomNameResponse> {
         return toBlocking { getRoomName(roomId) }
+    }
+
+    override suspend fun getMessages(
+        request: RoomsGetMessagesRequest
+    ): Response<RoomsGetMessagesResponse> {
+        return proceed {
+            val roomId = request.roomId ?: ""
+            HttpRequest()
+                .url("${uri}/_matrix/client/v3/rooms/${roomId}/messages")
+                .header(AUTHORIZATION, bearerToken())
+                .accept(MediaType.JSON)
+                .qwn("from", request.from)
+                .qwn("to", request.to)
+                .qwn("dir", request.dir)
+                .qwn("limit", request.limit)
+                .qwn("filter", request.filter)
+                .get()
+        }
+    }
+
+    override fun getMessagesBlocking(
+        request: RoomsGetMessagesRequest
+    ): Response<RoomsGetMessagesResponse> {
+        return toBlocking { getMessages(request) }
     }
 
     override suspend fun sendMessage(
