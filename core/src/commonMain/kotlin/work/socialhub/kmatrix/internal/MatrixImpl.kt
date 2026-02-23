@@ -11,6 +11,7 @@ import work.socialhub.kmatrix.api.PresenceResource
 import work.socialhub.kmatrix.api.ProfileResource
 import work.socialhub.kmatrix.api.RoomsResource
 import work.socialhub.kmatrix.api.SyncResource
+import work.socialhub.kmatrix.api.TagsResource
 
 class MatrixImpl(
     private val uri: String,
@@ -27,6 +28,7 @@ class MatrixImpl(
     private val media: MediaResource = MediaResourceImpl(uri, accessToken)
     private val devices: DevicesResource = DevicesResourceImpl(uri, accessToken)
     private val directory: DirectoryResource = DirectoryResourceImpl(uri, accessToken)
+    private val tags: TagsResource = TagsResourceImpl(uri, accessToken)
 
     /**
      * get uri
@@ -48,4 +50,5 @@ class MatrixImpl(
     override fun media() = media
     override fun devices() = devices
     override fun directory() = directory
+    override fun tags() = tags
 }
