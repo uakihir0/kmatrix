@@ -19,6 +19,7 @@ import work.socialhub.kmatrix.api.VersionsResource
 import work.socialhub.kmatrix.api.CapabilitiesResource
 import work.socialhub.kmatrix.api.AccountDataResource
 import work.socialhub.kmatrix.api.NotificationsResource
+import work.socialhub.kmatrix.api.EventsResource
 
 class MatrixImpl(
     private val uri: String,
@@ -43,6 +44,7 @@ class MatrixImpl(
     private val capabilities: CapabilitiesResource = CapabilitiesResourceImpl(uri, accessToken)
     private val accountData: AccountDataResource = AccountDataResourceImpl(uri, accessToken)
     private val notifications: NotificationsResource = NotificationsResourceImpl(uri, accessToken)
+    private val events: EventsResource = EventsResourceImpl(uri, accessToken)
 
     /**
      * get uri
@@ -72,4 +74,5 @@ class MatrixImpl(
     override fun capabilities() = capabilities
     override fun accountData() = accountData
     override fun notifications() = notifications
+    override fun events() = events
 }

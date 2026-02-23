@@ -18,6 +18,7 @@ import work.socialhub.kmatrix.api.VersionsResource
 import work.socialhub.kmatrix.api.CapabilitiesResource
 import work.socialhub.kmatrix.api.AccountDataResource
 import work.socialhub.kmatrix.api.NotificationsResource
+import work.socialhub.kmatrix.api.EventsResource
 import kotlin.js.JsExport
 
 @JsExport
@@ -41,6 +42,7 @@ interface Matrix {
     fun capabilities(): CapabilitiesResource
     fun accountData(): AccountDataResource
     fun notifications(): NotificationsResource
+    fun events(): EventsResource
 
     fun uri(): String
     fun accessToken(): String
