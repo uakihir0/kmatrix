@@ -16,6 +16,7 @@ import work.socialhub.kmatrix.api.PushRulesResource
 import work.socialhub.kmatrix.api.SearchResource
 import work.socialhub.kmatrix.api.UserDirectoryResource
 import work.socialhub.kmatrix.api.VersionsResource
+import work.socialhub.kmatrix.api.CapabilitiesResource
 
 class MatrixImpl(
     private val uri: String,
@@ -37,6 +38,7 @@ class MatrixImpl(
     private val search: SearchResource = SearchResourceImpl(uri, accessToken)
     private val userDirectory: UserDirectoryResource = UserDirectoryResourceImpl(uri, accessToken)
     private val versions: VersionsResource = VersionsResourceImpl(uri)
+    private val capabilities: CapabilitiesResource = CapabilitiesResourceImpl(uri, accessToken)
 
     /**
      * get uri
@@ -63,4 +65,5 @@ class MatrixImpl(
     override fun search() = search
     override fun userDirectory() = userDirectory
     override fun versions() = versions
+    override fun capabilities() = capabilities
 }
