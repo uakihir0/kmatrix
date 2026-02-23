@@ -16,6 +16,7 @@ import work.socialhub.kmatrix.api.SearchResource
 import work.socialhub.kmatrix.api.UserDirectoryResource
 import work.socialhub.kmatrix.api.VersionsResource
 import work.socialhub.kmatrix.api.CapabilitiesResource
+import work.socialhub.kmatrix.api.AccountDataResource
 import kotlin.js.JsExport
 
 @JsExport
@@ -37,6 +38,7 @@ interface Matrix {
     fun userDirectory(): UserDirectoryResource
     fun versions(): VersionsResource
     fun capabilities(): CapabilitiesResource
+    fun accountData(): AccountDataResource
 
     fun uri(): String
     fun accessToken(): String
