@@ -18,6 +18,7 @@ import work.socialhub.kmatrix.api.UserDirectoryResource
 import work.socialhub.kmatrix.api.VersionsResource
 import work.socialhub.kmatrix.api.CapabilitiesResource
 import work.socialhub.kmatrix.api.AccountDataResource
+import work.socialhub.kmatrix.api.NotificationsResource
 
 class MatrixImpl(
     private val uri: String,
@@ -41,6 +42,7 @@ class MatrixImpl(
     private val versions: VersionsResource = VersionsResourceImpl(uri)
     private val capabilities: CapabilitiesResource = CapabilitiesResourceImpl(uri, accessToken)
     private val accountData: AccountDataResource = AccountDataResourceImpl(uri, accessToken)
+    private val notifications: NotificationsResource = NotificationsResourceImpl(uri, accessToken)
 
     /**
      * get uri
@@ -69,4 +71,5 @@ class MatrixImpl(
     override fun versions() = versions
     override fun capabilities() = capabilities
     override fun accountData() = accountData
+    override fun notifications() = notifications
 }
