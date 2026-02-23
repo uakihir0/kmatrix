@@ -4,16 +4,20 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import work.socialhub.khttpclient.HttpRequest
 import work.socialhub.kmatrix.api.RoomsResource
+import work.socialhub.kmatrix.api.request.rooms.RoomsBanRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsCreateRoomRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsGetMessagesRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsInviteRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsJoinRoomRequest
+import work.socialhub.kmatrix.api.request.rooms.RoomsKickRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsLeaveRoomRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsRedactEventRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsSendMessageRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsSendReceiptRequest
+import work.socialhub.kmatrix.api.request.rooms.RoomsSendStateEventRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsSetReadMarkersRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsTypingRequest
+import work.socialhub.kmatrix.api.request.rooms.RoomsUnbanRequest
 import work.socialhub.kmatrix.api.response.Response
 import work.socialhub.kmatrix.api.response.ResponseUnit
 import work.socialhub.kmatrix.api.response.rooms.RoomsCreateRoomResponse
@@ -25,6 +29,8 @@ import work.socialhub.kmatrix.api.response.rooms.RoomsGetRoomNameResponse
 import work.socialhub.kmatrix.api.response.rooms.RoomsJoinRoomResponse
 import work.socialhub.kmatrix.api.response.rooms.RoomsRedactEventResponse
 import work.socialhub.kmatrix.api.response.rooms.RoomsSendMessageResponse
+import work.socialhub.kmatrix.api.response.rooms.RoomsSendStateEventResponse
+import work.socialhub.kmatrix.MatrixException
 import work.socialhub.kmatrix.internal.InternalUtility.toJson
 import work.socialhub.kmatrix.util.Headers.AUTHORIZATION
 import work.socialhub.kmatrix.util.MediaType
@@ -352,6 +358,146 @@ class RoomsResourceImpl(
         return toBlocking { setReadMarkers(request) }
     }
 
+    override suspend fun ban(
+        request: RoomsBanRequest
+    ): ResponseUnit {
+        return proceedUnit {
+            val roomId = request.roomId ?: ""
+            val body = toJson(
+                BanBody(
+                    userId = request.userId ?: "",
+                    reason = request.reason,
+                )
+            )
+            HttpRequest()
+                .url("${uri}/_matrix/client/v3/rooms/${roomId}/ban")
+                .header(AUTHORIZATION, bearerToken())
+                .accept(MediaType.JSON)
+                .json(body)
+                .post()
+        }
+    }
+
+    override fun banBlocking(
+        request: RoomsBanRequest
+    ): ResponseUnit {
+        return toBlocking { ban(request) }
+    }
+
+    override suspend fun unban(
+        request: RoomsUnbanRequest
+    ): ResponseUnit {
+        return proceedUnit {
+            val roomId = request.roomId ?: ""
+            val body = toJson(
+                UnbanBody(
+                    userId = request.userId ?: "",
+                    reason = request.reason,
+                )
+            )
+            HttpRequest()
+                .url("${uri}/_matrix/client/v3/rooms/${roomId}/unban")
+                .header(AUTHORIZATION, bearerToken())
+                .accept(MediaType.JSON)
+                .json(body)
+                .post()
+        }
+    }
+
+    override fun unbanBlocking(
+        request: RoomsUnbanRequest
+    ): ResponseUnit {
+        return toBlocking { unban(request) }
+    }
+
+    override suspend fun kick(
+        request: RoomsKickRequest
+    ): ResponseUnit {
+        return proceedUnit {
+            val roomId = request.roomId ?: ""
+            val body = toJson(
+                KickBody(
+                    userId = request.userId ?: "",
+                    reason = request.reason,
+                )
+            )
+            HttpRequest()
+                .url("${uri}/_matrix/client/v3/rooms/${roomId}/kick")
+                .header(AUTHORIZATION, bearerToken())
+                .accept(MediaType.JSON)
+                .json(body)
+                .post()
+        }
+    }
+
+    override fun kickBlocking(
+        request: RoomsKickRequest
+    ): ResponseUnit {
+        return toBlocking { kick(request) }
+    }
+
+    override suspend fun getStateEvent(
+        roomId: String,
+        eventType: String,
+        stateKey: String
+    ): Response<String> {
+        try {
+            val url = if (stateKey.isEmpty()) {
+                "${uri}/_matrix/client/v3/rooms/${roomId}/state/${eventType}"
+            } else {
+                "${uri}/_matrix/client/v3/rooms/${roomId}/state/${eventType}/${stateKey}"
+            }
+            val response = HttpRequest()
+                .url(url)
+                .header(AUTHORIZATION, bearerToken())
+                .accept(MediaType.JSON)
+                .get()
+            if (response.status == 200) {
+                return Response(response.stringBody).also {
+                    it.json = response.stringBody
+                }
+            }
+            throw MatrixException(response.status, response.stringBody)
+        } catch (e: Exception) {
+            throw e as? MatrixException ?: MatrixException(e)
+        }
+    }
+
+    override fun getStateEventBlocking(
+        roomId: String,
+        eventType: String,
+        stateKey: String
+    ): Response<String> {
+        return toBlocking { getStateEvent(roomId, eventType, stateKey) }
+    }
+
+    override suspend fun sendStateEvent(
+        request: RoomsSendStateEventRequest
+    ): Response<RoomsSendStateEventResponse> {
+        return proceed {
+            val roomId = request.roomId ?: ""
+            val eventType = request.eventType ?: ""
+            val stateKey = request.stateKey ?: ""
+            val url = if (stateKey.isEmpty()) {
+                "${uri}/_matrix/client/v3/rooms/${roomId}/state/${eventType}"
+            } else {
+                "${uri}/_matrix/client/v3/rooms/${roomId}/state/${eventType}/${stateKey}"
+            }
+            HttpRequest()
+                .url(url)
+                .header(AUTHORIZATION, bearerToken())
+                .accept(MediaType.JSON)
+                .json(request.body ?: "{}")
+                .put()
+        }
+    }
+
+    override fun sendStateEventBlocking(
+        request: RoomsSendStateEventRequest
+    ): Response<RoomsSendStateEventResponse> {
+        return toBlocking { sendStateEvent(request) }
+    }
+
     private fun generateTxnId(): String {
         txnCounter++
         return "kmatrix_${txnCounter}_${Random.nextLong(0, 100000)}"
@@ -431,5 +577,29 @@ class RoomsResourceImpl(
         val msgtype: String,
         @SerialName("body")
         val body: String,
+    )
+
+    @Serializable
+    private data class BanBody(
+        @SerialName("user_id")
+        val userId: String,
+        @SerialName("reason")
+        val reason: String? = null,
+    )
+
+    @Serializable
+    private data class UnbanBody(
+        @SerialName("user_id")
+        val userId: String,
+        @SerialName("reason")
+        val reason: String? = null,
+    )
+
+    @Serializable
+    private data class KickBody(
+        @SerialName("user_id")
+        val userId: String,
+        @SerialName("reason")
+        val reason: String? = null,
     )
 }
