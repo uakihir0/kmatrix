@@ -13,6 +13,7 @@ import work.socialhub.kmatrix.api.RoomsResource
 import work.socialhub.kmatrix.api.SyncResource
 import work.socialhub.kmatrix.api.TagsResource
 import work.socialhub.kmatrix.api.PushRulesResource
+import work.socialhub.kmatrix.api.SearchResource
 
 class MatrixImpl(
     private val uri: String,
@@ -31,6 +32,7 @@ class MatrixImpl(
     private val directory: DirectoryResource = DirectoryResourceImpl(uri, accessToken)
     private val tags: TagsResource = TagsResourceImpl(uri, accessToken)
     private val pushRules: PushRulesResource = PushRulesResourceImpl(uri, accessToken)
+    private val search: SearchResource = SearchResourceImpl(uri, accessToken)
 
     /**
      * get uri
@@ -54,4 +56,5 @@ class MatrixImpl(
     override fun directory() = directory
     override fun tags() = tags
     override fun pushRules() = pushRules
+    override fun search() = search
 }
