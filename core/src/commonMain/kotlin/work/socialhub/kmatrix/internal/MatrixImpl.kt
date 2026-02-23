@@ -2,6 +2,7 @@ package work.socialhub.kmatrix.internal
 
 import work.socialhub.kmatrix.Matrix
 import work.socialhub.kmatrix.api.AccountsResource
+import work.socialhub.kmatrix.api.FilterResource
 import work.socialhub.kmatrix.api.LoginResource
 import work.socialhub.kmatrix.api.ProfileResource
 import work.socialhub.kmatrix.api.RoomsResource
@@ -17,6 +18,7 @@ class MatrixImpl(
     private val profile: ProfileResource = ProfileResourceImpl(uri, accessToken)
     private val rooms: RoomsResource = RoomsResourceImpl(uri, accessToken)
     private val sync: SyncResource = SyncResourceImpl(uri, accessToken)
+    private val filter: FilterResource = FilterResourceImpl(uri, accessToken)
 
     /**
      * get uri
@@ -33,4 +35,5 @@ class MatrixImpl(
     override fun profile() = profile
     override fun rooms() = rooms
     override fun sync() = sync
+    override fun filter() = filter
 }

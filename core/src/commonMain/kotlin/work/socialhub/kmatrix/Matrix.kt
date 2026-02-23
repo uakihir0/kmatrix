@@ -1,6 +1,7 @@
 package work.socialhub.kmatrix
 
 import work.socialhub.kmatrix.api.AccountsResource
+import work.socialhub.kmatrix.api.FilterResource
 import work.socialhub.kmatrix.api.LoginResource
 import work.socialhub.kmatrix.api.ProfileResource
 import work.socialhub.kmatrix.api.RoomsResource
@@ -15,6 +16,7 @@ interface Matrix {
     fun profile(): ProfileResource
     fun rooms(): RoomsResource
     fun sync(): SyncResource
+    fun filter(): FilterResource
 
     fun uri(): String
     fun accessToken(): String
