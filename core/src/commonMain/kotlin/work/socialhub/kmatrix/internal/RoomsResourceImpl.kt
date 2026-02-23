@@ -10,6 +10,7 @@ import work.socialhub.kmatrix.api.request.rooms.RoomsGetMessagesRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsInviteRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsJoinRoomRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsKickRequest
+import work.socialhub.kmatrix.api.request.rooms.RoomsForgetRoomRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsLeaveRoomRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsRedactEventRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsSendMessageRequest
@@ -30,6 +31,7 @@ import work.socialhub.kmatrix.api.response.rooms.RoomsJoinRoomResponse
 import work.socialhub.kmatrix.api.response.rooms.RoomsRedactEventResponse
 import work.socialhub.kmatrix.api.response.rooms.RoomsSendMessageResponse
 import work.socialhub.kmatrix.api.response.rooms.RoomsSendStateEventResponse
+import work.socialhub.kmatrix.api.response.rooms.RoomsStateEvent
 import work.socialhub.kmatrix.MatrixException
 import work.socialhub.kmatrix.internal.InternalUtility.toJson
 import work.socialhub.kmatrix.util.Headers.AUTHORIZATION
@@ -496,6 +498,43 @@ class RoomsResourceImpl(
         request: RoomsSendStateEventRequest
     ): Response<RoomsSendStateEventResponse> {
         return toBlocking { sendStateEvent(request) }
+    }
+
+    override suspend fun forgetRoom(
+        request: RoomsForgetRoomRequest
+    ): ResponseUnit {
+        return proceedUnit {
+            HttpRequest()
+                .url("${uri}/_matrix/client/v3/rooms/${request.roomId}/forget")
+                .header(AUTHORIZATION, bearerToken())
+                .accept(MediaType.JSON)
+                .json("{}")
+                .post()
+        }
+    }
+
+    override fun forgetRoomBlocking(
+        request: RoomsForgetRoomRequest
+    ): ResponseUnit {
+        return toBlocking { forgetRoom(request) }
+    }
+
+    override suspend fun getState(
+        roomId: String
+    ): Response<Array<RoomsStateEvent>> {
+        return proceed {
+            HttpRequest()
+                .url("${uri}/_matrix/client/v3/rooms/${roomId}/state")
+                .header(AUTHORIZATION, bearerToken())
+                .accept(MediaType.JSON)
+                .get()
+        }
+    }
+
+    override fun getStateBlocking(
+        roomId: String
+    ): Response<Array<RoomsStateEvent>> {
+        return toBlocking { getState(roomId) }
     }
 
     private fun generateTxnId(): String {

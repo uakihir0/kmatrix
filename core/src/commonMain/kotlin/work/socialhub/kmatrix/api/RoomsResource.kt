@@ -6,6 +6,7 @@ import work.socialhub.kmatrix.api.request.rooms.RoomsGetMessagesRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsInviteRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsJoinRoomRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsKickRequest
+import work.socialhub.kmatrix.api.request.rooms.RoomsForgetRoomRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsLeaveRoomRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsRedactEventRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsSendMessageRequest
@@ -26,6 +27,7 @@ import work.socialhub.kmatrix.api.response.rooms.RoomsJoinRoomResponse
 import work.socialhub.kmatrix.api.response.rooms.RoomsRedactEventResponse
 import work.socialhub.kmatrix.api.response.rooms.RoomsSendMessageResponse
 import work.socialhub.kmatrix.api.response.rooms.RoomsSendStateEventResponse
+import work.socialhub.kmatrix.api.response.rooms.RoomsStateEvent
 import kotlin.js.JsExport
 
 @JsExport
@@ -230,4 +232,30 @@ interface RoomsResource {
     fun sendStateEventBlocking(
         request: RoomsSendStateEventRequest
     ): Response<RoomsSendStateEventResponse>
+
+    /**
+     * POST /_matrix/client/v3/rooms/{roomId}/forget
+     * Stop remembering a particular room (remove from room list).
+     */
+    suspend fun forgetRoom(
+        request: RoomsForgetRoomRequest
+    ): ResponseUnit
+
+    @JsExport.Ignore
+    fun forgetRoomBlocking(
+        request: RoomsForgetRoomRequest
+    ): ResponseUnit
+
+    /**
+     * GET /_matrix/client/v3/rooms/{roomId}/state
+     * Get all state events in a room.
+     */
+    suspend fun getState(
+        roomId: String
+    ): Response<Array<RoomsStateEvent>>
+
+    @JsExport.Ignore
+    fun getStateBlocking(
+        roomId: String
+    ): Response<Array<RoomsStateEvent>>
 }
