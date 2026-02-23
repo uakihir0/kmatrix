@@ -1,5 +1,6 @@
 package work.socialhub.kmatrix.internal
 
+import io.ktor.http.encodeURLPathPart
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import work.socialhub.khttpclient.HttpRequest
@@ -26,7 +27,7 @@ class DirectoryResourceImpl(
     ): Response<DirectoryResolveAliasResponse> {
         return proceed {
             HttpRequest()
-                .url("${uri}/_matrix/client/v3/directory/room/${roomAlias}")
+                .url("${uri}/_matrix/client/v3/directory/room/${roomAlias.encodeURLPathPart()}")
                 .accept(MediaType.JSON)
                 .get()
         }
@@ -49,7 +50,7 @@ class DirectoryResourceImpl(
                 )
             )
             HttpRequest()
-                .url("${uri}/_matrix/client/v3/directory/room/${roomAlias}")
+                .url("${uri}/_matrix/client/v3/directory/room/${roomAlias.encodeURLPathPart()}")
                 .header(AUTHORIZATION, bearerToken())
                 .accept(MediaType.JSON)
                 .json(body)
@@ -68,7 +69,7 @@ class DirectoryResourceImpl(
     ): ResponseUnit {
         return proceedUnit {
             HttpRequest()
-                .url("${uri}/_matrix/client/v3/directory/room/${roomAlias}")
+                .url("${uri}/_matrix/client/v3/directory/room/${roomAlias.encodeURLPathPart()}")
                 .header(AUTHORIZATION, bearerToken())
                 .accept(MediaType.JSON)
                 .delete()
