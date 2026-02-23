@@ -1,5 +1,6 @@
 package work.socialhub.kmatrix.internal
 
+import io.ktor.http.encodeURLParameter
 import work.socialhub.khttpclient.HttpRequest
 import work.socialhub.kmatrix.MatrixException
 import work.socialhub.kmatrix.api.MediaResource
@@ -23,12 +24,16 @@ class MediaResourceImpl(
         request: MediaUploadRequest
     ): Response<MediaUploadResponse> {
         return proceed {
+            val url = buildString {
+                append("${uri}/_matrix/media/v3/upload")
+                request.fileName?.let {
+                    append("?filename=${it.encodeURLParameter()}")
+                }
+            }
             HttpRequest()
-                .url("${uri}/_matrix/media/v3/upload")
+                .url(url)
                 .header(AUTHORIZATION, bearerToken())
-                .header("Content-Type", request.contentType ?: "application/octet-stream")
                 .accept(MediaType.JSON)
-                .qwn("filename", request.fileName)
                 .file("file", request.fileName ?: "upload", request.bytes ?: byteArrayOf())
                 .post()
         }
