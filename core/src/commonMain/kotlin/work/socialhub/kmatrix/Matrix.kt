@@ -11,6 +11,7 @@ import work.socialhub.kmatrix.api.ProfileResource
 import work.socialhub.kmatrix.api.RoomsResource
 import work.socialhub.kmatrix.api.SyncResource
 import work.socialhub.kmatrix.api.TagsResource
+import work.socialhub.kmatrix.api.PushRulesResource
 import kotlin.js.JsExport
 
 @JsExport
@@ -27,6 +28,7 @@ interface Matrix {
     fun devices(): DevicesResource
     fun directory(): DirectoryResource
     fun tags(): TagsResource
+    fun pushRules(): PushRulesResource
 
     fun uri(): String
     fun accessToken(): String
