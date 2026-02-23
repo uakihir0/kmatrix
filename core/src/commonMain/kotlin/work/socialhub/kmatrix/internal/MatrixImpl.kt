@@ -4,6 +4,7 @@ import work.socialhub.kmatrix.Matrix
 import work.socialhub.kmatrix.api.AccountsResource
 import work.socialhub.kmatrix.api.FilterResource
 import work.socialhub.kmatrix.api.LoginResource
+import work.socialhub.kmatrix.api.MediaResource
 import work.socialhub.kmatrix.api.PresenceResource
 import work.socialhub.kmatrix.api.ProfileResource
 import work.socialhub.kmatrix.api.RoomsResource
@@ -21,6 +22,7 @@ class MatrixImpl(
     private val sync: SyncResource = SyncResourceImpl(uri, accessToken)
     private val filter: FilterResource = FilterResourceImpl(uri, accessToken)
     private val presence: PresenceResource = PresenceResourceImpl(uri, accessToken)
+    private val media: MediaResource = MediaResourceImpl(uri, accessToken)
 
     /**
      * get uri
@@ -39,4 +41,5 @@ class MatrixImpl(
     override fun sync() = sync
     override fun filter() = filter
     override fun presence() = presence
+    override fun media() = media
 }
