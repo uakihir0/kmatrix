@@ -1,6 +1,7 @@
 package work.socialhub.kmatrix
 
 import work.socialhub.kmatrix.api.AccountsResource
+import work.socialhub.kmatrix.api.DevicesResource
 import work.socialhub.kmatrix.api.FilterResource
 import work.socialhub.kmatrix.api.LoginResource
 import work.socialhub.kmatrix.api.MediaResource
@@ -21,6 +22,7 @@ interface Matrix {
     fun filter(): FilterResource
     fun presence(): PresenceResource
     fun media(): MediaResource
+    fun devices(): DevicesResource
 
     fun uri(): String
     fun accessToken(): String
