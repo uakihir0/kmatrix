@@ -1,5 +1,6 @@
 package work.socialhub.kmatrix.api.response.push
 
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlin.js.JsExport
@@ -49,7 +50,7 @@ class PushRule {
     var conditions: Array<PushCondition>? = null
 
     @SerialName("actions")
-    var actions: Array<String> = arrayOf()
+    var actions: Array<@Contextual Any?> = arrayOf()
 
     @SerialName("pattern")
     var pattern: String? = null
