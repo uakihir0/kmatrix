@@ -1,4 +1,8 @@
+> [日本語](./docs/README_ja.md)
+
 # kmatrix
+
+![Maven metadata URL](https://img.shields.io/maven-metadata/v?metadataUrl=https%3A%2F%2Frepo.repsy.io%2Fmvn%2Fuakihir0%2Fpublic%2Fwork%2Fsocialhub%2Fkmatrix%2Fcore%2Fmaven-metadata.xml)
 
 ![badge][badge-js]
 ![badge][badge-jvm]
@@ -13,6 +17,9 @@ The behavior on each platform depends on [khttpclient].
 ## Usage
 
 Below is how to use it in Kotlin with Gradle on supported platforms.
+**If you want to use it on Apple platforms, please refer to [kmatrix-cocoapods](https://github.com/uakihir0/kmatrix-cocoapods) or [kmatrix-spm](https://github.com/uakihir0/kmatrix-spm).**
+**Also, for usage in JavaScript, please refer to [kmatrix.js](https://github.com/uakihir0/kmatrix.js).**
+Please refer to the test code for how to use each API.
 
 ```kotlin:build.gradle.kts
 repositories {
@@ -26,11 +33,64 @@ dependencies {
 }
 ```
 
-### Basic Usage
+### Using as part of a regular Java project
+
+All of the above can be added to and used in regular Java projects, too. All you have to do is to use the suffix `-jvm` when listing the dependency.
+
+Here is a sample Maven configuration:
+
+```xml
+<dependency>
+    <groupId>work.socialhub.kmatrix</groupId>
+    <artifactId>core-jvm</artifactId>
+    <version>[VERSION]</version>
+</dependency>
+```
+
+### Authentication
+
+First, get the login flows supported by the server.
+
+```kotlin
+val matrix = MatrixFactory.instance("https://matrix.example.com")
+
+val response = matrix.login().getLoginFlows()
+println(response.data.flows)
+```
+
+Then, log in with a user ID and password to obtain an access token.
+
+```kotlin
+val response = matrix.login().loginWithPassword(
+    LoginPasswordRequest().also {
+        it.user = "@user:matrix.example.com"
+        it.password = "PASSWORD"
+    }
+)
+
+println(response.data.accessToken)
+```
+
+### Send Message
 
 ```kotlin
 val matrix = MatrixFactory.instance(
-    {{HOST}}, {{ACCESS_TOKEN}}
+    "https://matrix.example.com", "ACCESS_TOKEN"
+)
+
+matrix.rooms().sendMessage(
+    RoomsSendMessageRequest().also {
+        it.roomId = "!roomId:matrix.example.com"
+        it.body = "Hello World!"
+    }
+)
+```
+
+### Get Joined Rooms
+
+```kotlin
+val matrix = MatrixFactory.instance(
+    "https://matrix.example.com", "ACCESS_TOKEN"
 )
 
 val response = matrix.rooms().getJoinedRooms()
