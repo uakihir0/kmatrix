@@ -5,10 +5,12 @@ import work.socialhub.khttpclient.HttpRequest
 import work.socialhub.kmatrix.MatrixException
 import work.socialhub.kmatrix.api.MediaResource
 import work.socialhub.kmatrix.api.request.media.MediaDownloadRequest
+import work.socialhub.kmatrix.api.request.media.MediaPreviewUrlRequest
 import work.socialhub.kmatrix.api.request.media.MediaThumbnailRequest
 import work.socialhub.kmatrix.api.request.media.MediaUploadRequest
 import work.socialhub.kmatrix.api.response.Response
 import work.socialhub.kmatrix.api.response.media.MediaGetConfigResponse
+import work.socialhub.kmatrix.api.response.media.MediaPreviewUrlResponse
 import work.socialhub.kmatrix.api.response.media.MediaUploadResponse
 import work.socialhub.kmatrix.util.Headers.AUTHORIZATION
 import work.socialhub.kmatrix.util.MediaType
@@ -111,5 +113,25 @@ class MediaResourceImpl(
 
     override fun getConfigBlocking(): Response<MediaGetConfigResponse> {
         return toBlocking { getConfig() }
+    }
+
+    override suspend fun previewUrl(
+        request: MediaPreviewUrlRequest
+    ): Response<MediaPreviewUrlResponse> {
+        return proceed {
+            HttpRequest()
+                .url("${uri}/_matrix/media/v3/preview_url")
+                .header(AUTHORIZATION, bearerToken())
+                .accept(MediaType.JSON)
+                .qwn("url", request.url)
+                .qwn("ts", request.ts)
+                .get()
+        }
+    }
+
+    override fun previewUrlBlocking(
+        request: MediaPreviewUrlRequest
+    ): Response<MediaPreviewUrlResponse> {
+        return toBlocking { previewUrl(request) }
     }
 }

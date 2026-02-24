@@ -1,10 +1,12 @@
 package work.socialhub.kmatrix.api
 
 import work.socialhub.kmatrix.api.request.media.MediaDownloadRequest
+import work.socialhub.kmatrix.api.request.media.MediaPreviewUrlRequest
 import work.socialhub.kmatrix.api.request.media.MediaThumbnailRequest
 import work.socialhub.kmatrix.api.request.media.MediaUploadRequest
 import work.socialhub.kmatrix.api.response.Response
 import work.socialhub.kmatrix.api.response.media.MediaGetConfigResponse
+import work.socialhub.kmatrix.api.response.media.MediaPreviewUrlResponse
 import work.socialhub.kmatrix.api.response.media.MediaUploadResponse
 import kotlin.js.JsExport
 
@@ -58,4 +60,18 @@ interface MediaResource {
 
     @JsExport.Ignore
     fun getConfigBlocking(): Response<MediaGetConfigResponse>
+
+    /**
+     * GET /_matrix/media/v3/preview_url
+     * Get information about a URL for the client.
+     * This includes OpenGraph data and an optional image.
+     */
+    suspend fun previewUrl(
+        request: MediaPreviewUrlRequest
+    ): Response<MediaPreviewUrlResponse>
+
+    @JsExport.Ignore
+    fun previewUrlBlocking(
+        request: MediaPreviewUrlRequest
+    ): Response<MediaPreviewUrlResponse>
 }

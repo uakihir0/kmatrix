@@ -3,6 +3,7 @@ package work.socialhub.kmatrix.apis
 import kotlinx.coroutines.test.runTest
 import work.socialhub.kmatrix.AbstractTest
 import work.socialhub.kmatrix.api.request.media.MediaDownloadRequest
+import work.socialhub.kmatrix.api.request.media.MediaPreviewUrlRequest
 import work.socialhub.kmatrix.api.request.media.MediaThumbnailRequest
 import work.socialhub.kmatrix.api.request.media.MediaUploadRequest
 import kotlin.test.Test
@@ -113,6 +114,28 @@ class MediaTest : AbstractTest() {
         } catch (e: Exception) {
             // Some servers may not support thumbnails for very small images
             println("  Thumbnail not available: ${e.message}")
+        }
+    }
+
+    @Test
+    fun testPreviewUrl() = runTest {
+        try {
+            val response = matrix().media().previewUrl(
+                MediaPreviewUrlRequest().also {
+                    it.url = "https://matrix.org"
+                }
+            )
+            println("=== Preview URL ===")
+            println("  og:title       > ${response.data.ogTitle}")
+            println("  og:description > ${response.data.ogDescription}")
+            println("  og:image       > ${response.data.ogImage}")
+            println("  og:site_name   > ${response.data.ogSiteName}")
+            println("  og:type        > ${response.data.ogType}")
+            println("  image size     > ${response.data.matrixImageSize}")
+        } catch (e: Exception) {
+            // Some servers may not support URL preview
+            println("=== Preview URL ===")
+            println("  Not available: ${e.message}")
         }
     }
 }
