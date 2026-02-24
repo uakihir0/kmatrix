@@ -21,6 +21,7 @@ import work.socialhub.kmatrix.api.NotificationsResource
 import work.socialhub.kmatrix.api.EventsResource
 import work.socialhub.kmatrix.api.RelationsResource
 import work.socialhub.kmatrix.api.VoIPResource
+import work.socialhub.kmatrix.api.PushersResource
 import kotlin.js.JsExport
 
 @JsExport
@@ -47,6 +48,7 @@ interface Matrix {
     fun events(): EventsResource
     fun relations(): RelationsResource
     fun voip(): VoIPResource
+    fun pushers(): PushersResource
 
     fun uri(): String
     fun accessToken(): String

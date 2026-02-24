@@ -22,6 +22,7 @@ import work.socialhub.kmatrix.api.NotificationsResource
 import work.socialhub.kmatrix.api.EventsResource
 import work.socialhub.kmatrix.api.RelationsResource
 import work.socialhub.kmatrix.api.VoIPResource
+import work.socialhub.kmatrix.api.PushersResource
 
 class MatrixImpl(
     private val uri: String,
@@ -49,6 +50,7 @@ class MatrixImpl(
     private val events: EventsResource = EventsResourceImpl(uri, accessToken)
     private val relations: RelationsResource = RelationsResourceImpl(uri, accessToken)
     private val voip: VoIPResource = VoIPResourceImpl(uri, accessToken)
+    private val pushers: PushersResource = PushersResourceImpl(uri, accessToken)
 
     /**
      * get uri
@@ -81,4 +83,5 @@ class MatrixImpl(
     override fun events() = events
     override fun relations() = relations
     override fun voip() = voip
+    override fun pushers() = pushers
 }
