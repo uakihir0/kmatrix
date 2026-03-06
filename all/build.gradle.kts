@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
+import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
@@ -83,5 +84,14 @@ tasks.podPublishXCFramework {
             executable = "sh"
             args = listOf(project.projectDir.path + "/../tool/rename_podfile.sh")
         }.standardOutput.asText.get()
+    }
+}
+
+afterEvaluate {
+    tasks.withType<Kotlin2JsCompile>().configureEach {
+        compilerOptions {
+            target.set("es2015")
+            freeCompilerArgs.add("-Xes-long-as-bigint")
+        }
     }
 }

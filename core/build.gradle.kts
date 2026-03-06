@@ -1,5 +1,6 @@
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
@@ -66,4 +67,13 @@ tasks.named<Test>("jvmTest") {
 
 tasks.withType<JavaCompile>().configureEach {
     options.release.set(11)
+}
+
+afterEvaluate {
+    tasks.withType<Kotlin2JsCompile>().configureEach {
+        compilerOptions {
+            target.set("es2015")
+            freeCompilerArgs.add("-Xes-long-as-bigint")
+        }
+    }
 }
