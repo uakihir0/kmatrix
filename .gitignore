@@ -9,5 +9,6 @@ build/
 out/
 secrets.json
 jwt.txt
+swiftpackage/
 kotlin-js-store/
 /local.properties
