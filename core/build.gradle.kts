@@ -23,10 +23,14 @@ kotlin {
         compilations.all {
             compileTaskProvider.configure {
                 compilerOptions {
-                    freeCompilerArgs.add("-Xenable-suspend-function-exporting")
+                    target.set("es2015")
                 }
             }
         }
+    }
+
+    compilerOptions {
+        freeCompilerArgs.add("-XXLanguage:+JsAllowExportingSuspendFunctions")
     }
 
     iosX64()
