@@ -64,7 +64,7 @@ class MatrixStreamImpl(
         request: SyncRequest?,
         config: MatrixStream.Config,
     ): Flow<SyncResponse> = flow {
-        var since: String? = null
+        var since: String? = request?.since
         var retryCount = 0
 
         while (config.enabled) {
