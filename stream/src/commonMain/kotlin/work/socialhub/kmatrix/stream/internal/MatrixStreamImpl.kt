@@ -81,7 +81,7 @@ class MatrixStreamImpl(
                 val backoff = minOf(
                     config.initialBackoff * (1L shl retryCount),
                     config.maxBackoff
-                ) + (Math.random() * 1000).toLong()
+                ) + kotlin.random.Random.nextLong(1000)
                 delay(backoff)
                 retryCount++
             }
