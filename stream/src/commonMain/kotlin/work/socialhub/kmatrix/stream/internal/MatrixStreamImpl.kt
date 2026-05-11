@@ -8,6 +8,7 @@ import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
+import io.ktor.http.encodeURLParameter
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.utils.io.errors.IOException
 import kotlinx.coroutines.delay
@@ -103,7 +104,7 @@ class MatrixStreamImpl(
         }
 
         val url = if (queryParams.isNotEmpty()) {
-            val params = queryParams.map { "${it.key}=${it.value}" }.joinToString("&")
+            val params = queryParams.map { "${it.key}=${it.value.encodeURLParameter()}" }.joinToString("&")
             "${uri}/_matrix/client/v3/sync?$params"
         } else {
             "${uri}/_matrix/client/v3/sync?timeout=$timeout"
