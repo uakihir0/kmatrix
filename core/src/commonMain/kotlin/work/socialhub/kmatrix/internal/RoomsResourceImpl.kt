@@ -265,12 +265,13 @@ class RoomsResourceImpl(
                     } else null,
                 )
             } else null
+            val isHtml = request.msgtype == "m.text" && request.body != null && request.body!!.contains("<") && request.body!!.contains(">")
             val body = toJson(
                 SendMessageBody(
                     msgtype = request.msgtype ?: "m.text",
                     body = request.body ?: "",
-                    format = if (request.msgtype == "m.text" && request.body != null && request.body!!.contains("<") && request.body!!.contains(">")) "org.matrix.custom.html" else null,
-                    formattedBody = null,
+                    format = if (isHtml) "org.matrix.custom.html" else null,
+                    formattedBody = if (isHtml) request.body else null,
                     url = request.url,
                     filename = request.filename,
                     mimetype = request.mimetype,
