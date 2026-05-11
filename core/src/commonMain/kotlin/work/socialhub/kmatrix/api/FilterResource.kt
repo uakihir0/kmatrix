@@ -1,8 +1,10 @@
 package work.socialhub.kmatrix.api
 
+import work.socialhub.kmatrix.api.request.filter.DeleteFilterRequest
 import work.socialhub.kmatrix.api.request.filter.FilterCreateRequest
 import work.socialhub.kmatrix.api.request.filter.FilterGetRequest
 import work.socialhub.kmatrix.api.response.Response
+import work.socialhub.kmatrix.api.response.ResponseUnit
 import work.socialhub.kmatrix.api.response.filter.FilterCreateResponse
 import work.socialhub.kmatrix.api.response.filter.FilterGetResponse
 import kotlin.js.JsExport
@@ -35,4 +37,17 @@ interface FilterResource {
     fun getFilterBlocking(
         request: FilterGetRequest
     ): Response<FilterGetResponse>
+
+    /**
+     * DELETE /_matrix/client/v3/user/{userId}/filter/{filterId}
+     * Delete a filter.
+     */
+    suspend fun deleteFilter(
+        request: DeleteFilterRequest
+    ): ResponseUnit
+
+    @JsExport.Ignore
+    fun deleteFilterBlocking(
+        request: DeleteFilterRequest
+    ): ResponseUnit
 }

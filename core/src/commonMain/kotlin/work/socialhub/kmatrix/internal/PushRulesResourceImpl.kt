@@ -4,6 +4,8 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import work.socialhub.khttpclient.HttpRequest
 import work.socialhub.kmatrix.api.PushRulesResource
+import work.socialhub.kmatrix.api.request.push.PushRulesCreateRequest
+import work.socialhub.kmatrix.api.request.push.PushRulesDeleteRequest
 import work.socialhub.kmatrix.api.request.push.PushRulesSetEnabledRequest
 import work.socialhub.kmatrix.api.response.Response
 import work.socialhub.kmatrix.api.response.ResponseUnit
@@ -81,6 +83,51 @@ class PushRulesResourceImpl(
         request: PushRulesSetEnabledRequest
     ): ResponseUnit {
         return toBlocking { setEnabled(request) }
+    }
+
+    override suspend fun createRule(
+        request: PushRulesCreateRequest
+    ): ResponseUnit {
+        return proceedUnit {
+            val scope = request.scope ?: "global"
+            val kind = request.kind ?: ""
+            val ruleId = request.ruleId ?: ""
+            val body = request.ruleBody ?: "{}"
+            HttpRequest()
+                .url("${uri}/_matrix/client/v3/pushrules/${scope}/${kind}/${ruleId}")
+                .header(AUTHORIZATION, bearerToken())
+                .accept(MediaType.JSON)
+                .json(body)
+                .put()
+        }
+    }
+
+    override fun createRuleBlocking(
+        request: PushRulesCreateRequest
+    ): ResponseUnit {
+        return toBlocking { createRule(request) }
+    }
+
+    override suspend fun deleteRule(
+        request: PushRulesDeleteRequest
+    ): ResponseUnit {
+        return proceedUnit {
+            val scope = request.scope ?: "global"
+            val kind = request.kind ?: ""
+            val ruleId = request.ruleId ?: ""
+            HttpRequest()
+                .url("${uri}/_matrix/client/v3/pushrules/${scope}/${kind}/${ruleId}")
+                .header(AUTHORIZATION, bearerToken())
+                .accept(MediaType.JSON)
+                .json("{}")
+                .delete()
+        }
+    }
+
+    override fun deleteRuleBlocking(
+        request: PushRulesDeleteRequest
+    ): ResponseUnit {
+        return toBlocking { deleteRule(request) }
     }
 
     @Serializable

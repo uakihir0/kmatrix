@@ -1,5 +1,7 @@
 package work.socialhub.kmatrix.api
 
+import work.socialhub.kmatrix.api.request.push.PushRulesCreateRequest
+import work.socialhub.kmatrix.api.request.push.PushRulesDeleteRequest
 import work.socialhub.kmatrix.api.request.push.PushRulesSetEnabledRequest
 import work.socialhub.kmatrix.api.response.Response
 import work.socialhub.kmatrix.api.response.ResponseUnit
@@ -44,4 +46,22 @@ interface PushRulesResource {
 
     @JsExport.Ignore
     fun setEnabledBlocking(request: PushRulesSetEnabledRequest): ResponseUnit
+
+    /**
+     * PUT /_matrix/client/v3/pushrules/{scope}/{kind}/{ruleId}
+     * Create or replace a push rule.
+     */
+    suspend fun createRule(request: PushRulesCreateRequest): ResponseUnit
+
+    @JsExport.Ignore
+    fun createRuleBlocking(request: PushRulesCreateRequest): ResponseUnit
+
+    /**
+     * DELETE /_matrix/client/v3/pushrules/{scope}/{kind}/{ruleId}
+     * Delete a push rule.
+     */
+    suspend fun deleteRule(request: PushRulesDeleteRequest): ResponseUnit
+
+    @JsExport.Ignore
+    fun deleteRuleBlocking(request: PushRulesDeleteRequest): ResponseUnit
 }
