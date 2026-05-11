@@ -698,13 +698,13 @@ class RoomsResourceImpl(
 
     @Serializable
     private data class SendMessageInReplyTo(
-        @SerialName("eventId")
+        @SerialName("event_id")
         val eventId: String,
     )
 
     @Serializable
     private data class SendMessageAnnotation(
-        @SerialName("eventId")
+        @SerialName("event_id")
         val eventId: String,
         @SerialName("key")
         val key: String,
@@ -714,7 +714,7 @@ class RoomsResourceImpl(
 
     @Serializable
     private data class SendMessageReference(
-        @SerialName("eventId")
+        @SerialName("event_id")
         val eventId: String,
         @SerialName("rel_type")
         val relType: String? = null,
