@@ -239,10 +239,51 @@ class RoomsResourceImpl(
         return proceed {
             val roomId = request.roomId ?: ""
             val txnId = generateTxnId()
+            val relatesTo = if (
+                request.relatesToType != null ||
+                request.relatesToEventId != null ||
+                request.relatesToKey != null ||
+                request.relatesToRelType != null ||
+                request.replyTo != null
+            ) {
+                SendMessageRelatesTo(
+                    inReplyTo = if (request.replyTo != null || request.relatesToType == "m.in_reply_to") {
+                        SendMessageInReplyTo(eventId = request.replyTo ?: request.relatesToEventId ?: "")
+                    } else null,
+                    annotation = if (request.relatesToType == "m.annotation") {
+                        SendMessageAnnotation(
+                            eventId = request.relatesToEventId ?: "",
+                            key = request.relatesToKey ?: "",
+                            relType = request.relatesToRelType,
+                        )
+                    } else null,
+                    reference = if (request.relatesToType == "m.reference") {
+                        SendMessageReference(
+                            eventId = request.relatesToEventId ?: "",
+                            relType = request.relatesToRelType,
+                        )
+                    } else null,
+                )
+            } else null
+            val isHtml = request.msgtype == "m.text" && request.body != null && request.body!!.contains("<") && request.body!!.contains(">")
             val body = toJson(
                 SendMessageBody(
                     msgtype = request.msgtype ?: "m.text",
                     body = request.body ?: "",
+                    format = if (isHtml) "org.matrix.custom.html" else null,
+                    formattedBody = if (isHtml) request.body else null,
+                    url = request.url,
+                    filename = request.filename,
+                    mimetype = request.mimetype,
+                    thumbnailUrl = request.thumbnailUrl,
+                    thumbnailMimetype = request.thumbnailMimetype,
+                    thumbnailSize = request.thumbnailSize,
+                    width = request.width,
+                    height = request.height,
+                    duration = request.duration,
+                    geoUri = request.geoUri,
+                    description = request.description,
+                    relatesTo = relatesTo,
                 )
             )
             HttpRequest()
@@ -616,6 +657,68 @@ class RoomsResourceImpl(
         val msgtype: String,
         @SerialName("body")
         val body: String,
+        @SerialName("format")
+        val format: String? = null,
+        @SerialName("formatted_body")
+        val formattedBody: String? = null,
+        @SerialName("url")
+        val url: String? = null,
+        @SerialName("filename")
+        val filename: String? = null,
+        @SerialName("mimetype")
+        val mimetype: String? = null,
+        @SerialName("thumbnail_url")
+        val thumbnailUrl: String? = null,
+        @SerialName("thumbnail_mimetype")
+        val thumbnailMimetype: String? = null,
+        @SerialName("thumbnail_size")
+        val thumbnailSize: Long? = null,
+        @SerialName("width")
+        val width: Long? = null,
+        @SerialName("height")
+        val height: Long? = null,
+        @SerialName("duration")
+        val duration: Long? = null,
+        @SerialName("geo_uri")
+        val geoUri: String? = null,
+        @SerialName("description")
+        val description: String? = null,
+        @SerialName("m.relates_to")
+        val relatesTo: SendMessageRelatesTo? = null,
+    )
+
+    @Serializable
+    private data class SendMessageRelatesTo(
+        @SerialName("m.in_reply_to")
+        val inReplyTo: SendMessageInReplyTo? = null,
+        @SerialName("m.annotation")
+        val annotation: SendMessageAnnotation? = null,
+        @SerialName("m.reference")
+        val reference: SendMessageReference? = null,
+    )
+
+    @Serializable
+    private data class SendMessageInReplyTo(
+        @SerialName("event_id")
+        val eventId: String,
+    )
+
+    @Serializable
+    private data class SendMessageAnnotation(
+        @SerialName("event_id")
+        val eventId: String,
+        @SerialName("key")
+        val key: String,
+        @SerialName("rel_type")
+        val relType: String? = null,
+    )
+
+    @Serializable
+    private data class SendMessageReference(
+        @SerialName("event_id")
+        val eventId: String,
+        @SerialName("rel_type")
+        val relType: String? = null,
     )
 
     @Serializable

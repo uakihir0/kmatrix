@@ -4,9 +4,11 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import work.socialhub.khttpclient.HttpRequest
 import work.socialhub.kmatrix.api.FilterResource
+import work.socialhub.kmatrix.api.request.filter.DeleteFilterRequest
 import work.socialhub.kmatrix.api.request.filter.FilterCreateRequest
 import work.socialhub.kmatrix.api.request.filter.FilterGetRequest
 import work.socialhub.kmatrix.api.response.Response
+import work.socialhub.kmatrix.api.response.ResponseUnit
 import work.socialhub.kmatrix.api.response.filter.FilterCreateResponse
 import work.socialhub.kmatrix.api.response.filter.FilterGetResponse
 import work.socialhub.kmatrix.internal.InternalUtility.toJson
@@ -91,6 +93,27 @@ class FilterResourceImpl(
         request: FilterGetRequest
     ): Response<FilterGetResponse> {
         return toBlocking { getFilter(request) }
+    }
+
+    override suspend fun deleteFilter(
+        request: DeleteFilterRequest
+    ): ResponseUnit {
+        return proceedUnit {
+            val userId = request.userId ?: ""
+            val filterId = request.filterId ?: ""
+            HttpRequest()
+                .url("${uri}/_matrix/client/v3/user/${userId}/filter/${filterId}")
+                .header(AUTHORIZATION, bearerToken())
+                .accept(MediaType.JSON)
+                .json("{}")
+                .delete()
+        }
+    }
+
+    override fun deleteFilterBlocking(
+        request: DeleteFilterRequest
+    ): ResponseUnit {
+        return toBlocking { deleteFilter(request) }
     }
 
     @Serializable

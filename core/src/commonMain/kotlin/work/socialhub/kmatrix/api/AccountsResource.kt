@@ -1,7 +1,10 @@
 package work.socialhub.kmatrix.api
 
+import work.socialhub.kmatrix.api.request.account.ChangePasswordRequest
+import work.socialhub.kmatrix.api.request.account.RegisterRequest
 import work.socialhub.kmatrix.api.response.Response
 import work.socialhub.kmatrix.api.response.ResponseUnit
+import work.socialhub.kmatrix.api.response.account.RegisterResponse
 import work.socialhub.kmatrix.api.response.accounts.AccountsWhoamiResponse
 import kotlin.js.JsExport
 
@@ -34,4 +37,32 @@ interface AccountsResource {
 
     @JsExport.Ignore
     fun logoutAllBlocking(): ResponseUnit
+
+    /**
+     * Creates a new account on the server.
+     * POST /_matrix/client/v3/register
+     * (No authentication required)
+     */
+    suspend fun register(
+        request: RegisterRequest
+    ): Response<RegisterResponse>
+
+    @JsExport.Ignore
+    fun registerBlocking(
+        request: RegisterRequest
+    ): Response<RegisterResponse>
+
+    /**
+     * Changes the password for the current account.
+     * POST /_matrix/client/v3/account/password
+     */
+    suspend fun changePassword(
+        request: ChangePasswordRequest
+    ): ResponseUnit
+
+    @JsExport.Ignore
+    fun changePasswordBlocking(
+        request: ChangePasswordRequest
+    ): ResponseUnit
 }
+
