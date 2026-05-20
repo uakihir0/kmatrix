@@ -1,8 +1,8 @@
 package work.socialhub.kmatrix.entity.share
 
-import kotlinx.datetime.Instant
 import work.socialhub.khttpclient.HttpResponse
 import kotlin.js.JsExport
+import kotlin.time.Instant
 
 @JsExport
 class RateLimit {
