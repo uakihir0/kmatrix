@@ -38,7 +38,6 @@ kotlin {
             implementation(libs.ktor.core)
             implementation(libs.ktor.content.negotiation)
             implementation(libs.ktor.serialization.json)
-            implementation(libs.kmpcommon)
             implementation(libs.khttpclient)
             implementation(libs.coroutines.core)
             implementation(libs.serialization.json)
