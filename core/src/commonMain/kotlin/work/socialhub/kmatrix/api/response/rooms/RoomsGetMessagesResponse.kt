@@ -38,7 +38,7 @@ class RoomEvent {
     var originServerTs: Long = 0
 
     @SerialName("content")
-    var content: Map<String, @Serializable(with = work.socialhub.kmpcommon.AnySerializer::class) Any?> = mapOf()
+    var content: Map<String, @Serializable(with = work.socialhub.kmatrix.internal.AnySerializer::class) Any?> = mapOf()
 
     @SerialName("room_id")
     var roomId: String? = null
@@ -47,5 +47,5 @@ class RoomEvent {
     var stateKey: String? = null
 
     @SerialName("unsigned")
-    var unsigned: Map<String, @Serializable(with = work.socialhub.kmpcommon.AnySerializer::class) Any?>? = null
+    var unsigned: Map<String, @Serializable(with = work.socialhub.kmatrix.internal.AnySerializer::class) Any?>? = null
 }
