@@ -10,7 +10,7 @@ plugins {
 }
 
 kotlin {
-    js(IR) {
+    js {
         nodejs()
         browser()
         binaries.library()
@@ -28,7 +28,6 @@ kotlin {
         iosX64(),
         iosArm64(),
         iosSimulatorArm64(),
-        macosX64(),
         macosArm64(),
     ).forEach {
         it.binaries.framework {
