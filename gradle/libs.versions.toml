@@ -3,14 +3,14 @@ coroutines = "1.11.0"
 kotest = "6.2.1"
 kotlin = "2.4.0"
 nexus-publish = "2.0.0"
-maven-publish = "0.36.0"
+maven-publish = "0.37.0"
 dokka = "2.2.0"
 
 [libraries]
 khttpclient = "work.socialhub:khttpclient:0.0.9"
-ktor-core = "io.ktor:ktor-client-core:3.5.0"
-ktor-content-negotiation = "io.ktor:ktor-client-content-negotiation:3.5.0"
-ktor-serialization-json = "io.ktor:ktor-serialization-kotlinx-json:3.5.0"
+ktor-core = "io.ktor:ktor-client-core:3.5.1"
+ktor-content-negotiation = "io.ktor:ktor-client-content-negotiation:3.5.1"
+ktor-serialization-json = "io.ktor:ktor-serialization-kotlinx-json:3.5.1"
 datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.8.0"
 coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
