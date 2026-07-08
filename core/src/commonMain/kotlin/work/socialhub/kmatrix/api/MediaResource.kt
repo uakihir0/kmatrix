@@ -27,8 +27,10 @@ interface MediaResource {
     ): Response<MediaUploadResponse>
 
     /**
-     * GET /_matrix/media/v3/download/{serverName}/{mediaId}
-     * Download content from the content repository.
+     * GET /_matrix/client/v1/media/download/{serverName}/{mediaId}
+     * Download content from the content repository (authenticated media,
+     * Matrix 1.11 / MSC3916). Falls back to the legacy unauthenticated
+     * GET /_matrix/media/v3/download/{serverName}/{mediaId} on older servers.
      */
     suspend fun download(
         request: MediaDownloadRequest
@@ -40,8 +42,10 @@ interface MediaResource {
     ): ByteArray
 
     /**
-     * GET /_matrix/media/v3/thumbnail/{serverName}/{mediaId}
-     * Download a thumbnail of content from the content repository.
+     * GET /_matrix/client/v1/media/thumbnail/{serverName}/{mediaId}
+     * Download a thumbnail of content from the content repository
+     * (authenticated media, Matrix 1.11 / MSC3916). Falls back to the legacy
+     * GET /_matrix/media/v3/thumbnail/{serverName}/{mediaId} on older servers.
      */
     suspend fun thumbnail(
         request: MediaThumbnailRequest
