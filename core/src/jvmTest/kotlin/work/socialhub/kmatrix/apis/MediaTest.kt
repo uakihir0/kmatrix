@@ -74,8 +74,9 @@ class MediaTest : AbstractTest() {
             println("  Downloaded  > ${bytes.size} bytes")
             assert(bytes.isNotEmpty())
         } catch (e: Exception) {
-            // Some servers have deprecated /_matrix/media/v3/download
-            // in favor of /_matrix/client/v1/media/download
+            // download() now prefers the authenticated /_matrix/client/v1/media
+            // endpoint and falls back to the legacy /_matrix/media/v3 path, so a
+            // failure here means neither is available on this homeserver.
             println("  Download not available: ${e.message}")
         }
     }

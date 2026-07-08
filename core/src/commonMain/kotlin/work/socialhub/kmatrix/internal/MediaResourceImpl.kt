@@ -53,11 +53,26 @@ class MediaResourceImpl(
         try {
             val serverName = request.serverName ?: ""
             val mediaId = request.mediaId ?: ""
-            val response = HttpRequest()
-                .url("${uri}/_matrix/media/v3/download/${serverName}/${mediaId}")
+
+            // Prefer the Matrix 1.11 authenticated media endpoint (MSC3916).
+            // matrix.org and other homeservers have frozen the legacy
+            // unauthenticated /_matrix/media/v3/* endpoints, so this must be
+            // tried first. The v1 endpoint does not accept allow_remote.
+            var response = HttpRequest()
+                .url("${uri}/_matrix/client/v1/media/download/${serverName}/${mediaId}")
                 .header(AUTHORIZATION, bearerToken())
-                .qwn("allow_remote", request.allowRemote)
                 .get()
+
+            // Fall back to the legacy endpoint for homeservers that predate
+            // authenticated media (they answer the v1 path with 404/400).
+            if (shouldFallbackToLegacy(response.status)) {
+                response = HttpRequest()
+                    .url("${uri}/_matrix/media/v3/download/${serverName}/${mediaId}")
+                    .header(AUTHORIZATION, bearerToken())
+                    .qwn("allow_remote", request.allowRemote)
+                    .get()
+            }
+
             if (response.status == 200) {
                 return response.body
             }
@@ -79,13 +94,27 @@ class MediaResourceImpl(
         try {
             val serverName = request.serverName ?: ""
             val mediaId = request.mediaId ?: ""
-            val response = HttpRequest()
-                .url("${uri}/_matrix/media/v3/thumbnail/${serverName}/${mediaId}")
+
+            // Prefer the Matrix 1.11 authenticated media endpoint (MSC3916);
+            // see download() for the rationale.
+            var response = HttpRequest()
+                .url("${uri}/_matrix/client/v1/media/thumbnail/${serverName}/${mediaId}")
                 .header(AUTHORIZATION, bearerToken())
                 .qwn("width", request.width)
                 .qwn("height", request.height)
                 .qwn("method", request.method)
                 .get()
+
+            if (shouldFallbackToLegacy(response.status)) {
+                response = HttpRequest()
+                    .url("${uri}/_matrix/media/v3/thumbnail/${serverName}/${mediaId}")
+                    .header(AUTHORIZATION, bearerToken())
+                    .qwn("width", request.width)
+                    .qwn("height", request.height)
+                    .qwn("method", request.method)
+                    .get()
+            }
+
             if (response.status == 200) {
                 return response.body
             }
@@ -93,6 +122,15 @@ class MediaResourceImpl(
         } catch (e: Exception) {
             throw e as? MatrixException ?: MatrixException(e)
         }
+    }
+
+    /**
+     * Whether a response from the authenticated (v1) media endpoint indicates
+     * the homeserver does not support it, so the legacy (v3) endpoint should be
+     * tried. Older servers return 404 (unknown route) or 400 for the v1 path.
+     */
+    private fun shouldFallbackToLegacy(status: Int): Boolean {
+        return status == 404 || status == 400
     }
 
     override fun thumbnailBlocking(
