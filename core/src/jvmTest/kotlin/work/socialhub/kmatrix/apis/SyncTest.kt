@@ -28,6 +28,10 @@ class SyncTest : AbstractTest() {
                 println("  Room ID         > $roomId")
                 println("  Timeline Events > $timelineEvents")
                 println("  State Events    > $stateEvents")
+                room.summary?.let { summary ->
+                    println("  Heroes          > ${summary.heroes?.joinToString(", ")}")
+                    println("  Joined Members  > ${summary.joinedMemberCount}")
+                }
                 val unread = room.unreadNotifications
                 if (unread != null) {
                     println("  Notifications   > ${unread.notificationCount}")
