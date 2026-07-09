@@ -17,11 +17,17 @@ object AnySerializer : KSerializer<Any> {
     override fun deserialize(decoder: Decoder): Any {
         require(decoder is JsonDecoder)
         val element = decoder.decodeJsonElement()
-        return element.toAny()
+        // A top-level null is handled by the nullable wrapper before reaching
+        // here; guard defensively so the return type stays non-null.
+        return element.toAny() ?: throw IllegalStateException("Unexpected null value")
     }
 
-    private fun JsonElement.toAny(): Any {
+    private fun JsonElement.toAny(): Any? {
         when (this) {
+            // A JSON null nested inside an object/array (e.g. `avatar_url: null`
+            // in an m.room.member event) — keep it as null instead of throwing.
+            is JsonNull -> return null
+
             is JsonPrimitive -> {
                 return when {
                     this.isString -> this.content
