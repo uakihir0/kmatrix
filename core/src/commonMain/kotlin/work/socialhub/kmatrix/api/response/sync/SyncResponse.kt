@@ -37,6 +37,9 @@ class SyncRooms {
 @Serializable
 class SyncJoinedRoom {
 
+    @SerialName("summary")
+    var summary: SyncRoomSummary? = null
+
     @SerialName("timeline")
     var timeline: SyncTimeline? = null
 
@@ -51,6 +54,29 @@ class SyncJoinedRoom {
 
     @SerialName("unread_notifications")
     var unreadNotifications: SyncUnreadNotifications? = null
+}
+
+/**
+ * Room summary block from `/sync` (MSC688). Lets clients compute a room's
+ * display name and member count without fetching the full member list, which
+ * is what enables `lazy_load_members`.
+ */
+@JsExport
+@Serializable
+class SyncRoomSummary {
+
+    /**
+     * A subset of the room members used to name the room when it has no
+     * `m.room.name` / `m.room.canonical_alias` (the current user is excluded).
+     */
+    @SerialName("m.heroes")
+    var heroes: Array<String>? = null
+
+    @SerialName("m.joined_member_count")
+    var joinedMemberCount: Int? = null
+
+    @SerialName("m.invited_member_count")
+    var invitedMemberCount: Int? = null
 }
 
 @JsExport
