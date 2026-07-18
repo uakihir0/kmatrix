@@ -10,6 +10,7 @@ import work.socialhub.kmatrix.api.request.rooms.RoomsForgetRoomRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsLeaveRoomRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsRedactEventRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsSendMessageRequest
+import work.socialhub.kmatrix.api.request.rooms.RoomsSendReactionRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsSendReceiptRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsSendStateEventRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsSetReadMarkersRequest
@@ -126,6 +127,18 @@ interface RoomsResource {
     @JsExport.Ignore
     fun sendMessageBlocking(
         request: RoomsSendMessageRequest
+    ): Response<RoomsSendMessageResponse>
+
+    /**
+     * PUT /_matrix/client/v3/rooms/{roomId}/send/m.reaction/{txnId}
+     */
+    suspend fun sendReaction(
+        request: RoomsSendReactionRequest
+    ): Response<RoomsSendMessageResponse>
+
+    @JsExport.Ignore
+    fun sendReactionBlocking(
+        request: RoomsSendReactionRequest
     ): Response<RoomsSendMessageResponse>
 
     /**
