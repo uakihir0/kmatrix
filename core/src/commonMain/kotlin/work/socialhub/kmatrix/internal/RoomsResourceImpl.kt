@@ -14,6 +14,7 @@ import work.socialhub.kmatrix.api.request.rooms.RoomsForgetRoomRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsLeaveRoomRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsRedactEventRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsSendMessageRequest
+import work.socialhub.kmatrix.api.request.rooms.RoomsSendReactionRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsSendReceiptRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsSendStateEventRequest
 import work.socialhub.kmatrix.api.request.rooms.RoomsSetReadMarkersRequest
@@ -239,6 +240,18 @@ class RoomsResourceImpl(
         return proceed {
             val roomId = request.roomId ?: ""
             val txnId = generateTxnId()
+            if (request.msgtype == "m.reaction") {
+                val body = serializeReactionBody(
+                    request.relatesToEventId ?: "",
+                    request.relatesToKey ?: request.body ?: "",
+                )
+                return@proceed HttpRequest()
+                    .url("${uri}/_matrix/client/v3/rooms/${roomId}/send/m.reaction/${txnId}")
+                    .header(AUTHORIZATION, bearerToken())
+                    .accept(MediaType.JSON)
+                    .json(body)
+                    .put()
+            }
             val relatesTo = if (
                 request.relatesToType != null ||
                 request.relatesToEventId != null ||
@@ -299,6 +312,42 @@ class RoomsResourceImpl(
         request: RoomsSendMessageRequest
     ): Response<RoomsSendMessageResponse> {
         return toBlocking { sendMessage(request) }
+    }
+
+    override suspend fun sendReaction(
+        request: RoomsSendReactionRequest
+    ): Response<RoomsSendMessageResponse> {
+        return proceed {
+            val roomId = request.roomId ?: ""
+            val txnId = generateTxnId()
+            val body = serializeReactionBody(
+                request.eventId ?: "",
+                request.key ?: "",
+            )
+            HttpRequest()
+                .url("${uri}/_matrix/client/v3/rooms/${roomId}/send/m.reaction/${txnId}")
+                .header(AUTHORIZATION, bearerToken())
+                .accept(MediaType.JSON)
+                .json(body)
+                .put()
+        }
+    }
+
+    internal fun serializeReactionBody(eventId: String, key: String): String {
+        return toJson(
+            SendReactionBody(
+                relatesTo = SendReactionRelatesTo(
+                    eventId = eventId,
+                    key = key,
+                )
+            )
+        )
+    }
+
+    override fun sendReactionBlocking(
+        request: RoomsSendReactionRequest
+    ): Response<RoomsSendMessageResponse> {
+        return toBlocking { sendReaction(request) }
     }
 
     override suspend fun redactEvent(
@@ -719,6 +768,22 @@ class RoomsResourceImpl(
         val eventId: String,
         @SerialName("rel_type")
         val relType: String? = null,
+    )
+
+    @Serializable
+    private data class SendReactionBody(
+        @SerialName("m.relates_to")
+        val relatesTo: SendReactionRelatesTo,
+    )
+
+    @Serializable
+    private data class SendReactionRelatesTo(
+        @SerialName("rel_type")
+        val relType: String = "m.annotation",
+        @SerialName("event_id")
+        val eventId: String,
+        @SerialName("key")
+        val key: String,
     )
 
     @Serializable
